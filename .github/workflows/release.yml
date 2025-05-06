@@ -27,3 +27,86 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+  # バイナリファイル名を変更するジョブを追加
+  rename-binaries:
+    needs: goreleaser
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download release assets
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const release = await github.rest.repos.getReleaseByTag({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag: context.ref.replace('refs/tags/', '')
+            });
+            
+            for (const asset of release.data.assets) {
+              if (asset.name.includes('darwin_amd64')) {
+                await github.rest.repos.uploadReleaseAsset({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  release_id: release.data.id,
+                  name: 'passgen-darwin-amd64',
+                  data: await github.rest.repos.downloadReleaseAsset({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    asset_id: asset.id,
+                    headers: {
+                      accept: 'application/octet-stream'
+                    }
+                  }).then(res => res.data)
+                });
+              }
+              if (asset.name.includes('darwin_arm64')) {
+                await github.rest.repos.uploadReleaseAsset({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  release_id: release.data.id,
+                  name: 'passgen-darwin-arm64',
+                  data: await github.rest.repos.downloadReleaseAsset({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    asset_id: asset.id,
+                    headers: {
+                      accept: 'application/octet-stream'
+                    }
+                  }).then(res => res.data)
+                });
+              }
+              if (asset.name.includes('linux_amd64')) {
+                await github.rest.repos.uploadReleaseAsset({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  release_id: release.data.id,
+                  name: 'passgen-linux-amd64',
+                  data: await github.rest.repos.downloadReleaseAsset({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    asset_id: asset.id,
+                    headers: {
+                      accept: 'application/octet-stream'
+                    }
+                  }).then(res => res.data)
+                });
+              }
+              if (asset.name.includes('linux_arm64')) {
+                await github.rest.repos.uploadReleaseAsset({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  release_id: release.data.id,
+                  name: 'passgen-linux-arm64',
+                  data: await github.rest.repos.downloadReleaseAsset({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    asset_id: asset.id,
+                    headers: {
+                      accept: 'application/octet-stream'
+                    }
+                  }).then(res => res.data)
+                });
+              }
+            }

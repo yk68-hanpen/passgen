@@ -11,19 +11,25 @@ PassGen is a simple command-line tool for generating strong passwords.
 
 ## Installation
 
-### Using Homebrew
+### Easy Install (macOS/Linux)
 
 ```bash
-brew tap yk68-hanpen/passgen
-brew install passgen
+curl -L https://raw.githubusercontent.com/yk68-hanpen/passgen/main/install.sh | bash
 ```
 
-### From Source
+### Manual Installation
+
+#### Download Binary
+
+Download the appropriate binary for your platform from the [Releases](https://github.com/yk68-hanpen/passgen/releases) page.
+
+#### Build from Source
 
 ```bash
 git clone https://github.com/yk68-hanpen/passgen.git
 cd passgen
 go build -o passgen
+sudo mv passgen /usr/local/bin/
 ```
 
 ## Usage
